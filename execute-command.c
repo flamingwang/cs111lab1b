@@ -30,9 +30,34 @@ void execute (command_t c) {
   }
 }
 
-void execute_pipe (command_t c) {
+void execute_pipe (command_t c, int time_travel) {
+  int child_status;
   int first_pid, second_pid, return_pid;
   int mypipe[2];
+  pipe(mypipe);
+  first_pid = fork();
+  if (first_pid == 0) {
+    close(mypipe[0]);
+    dup2(mypipe[1], 1);
+    close(mypipe[1]);
+    execute_command(c->u.command[0], time_travel);
+  }
+  else {
+    second_pid = fork();
+    if (second_pid == 0) {
+      close(mypipe[1]);
+      dup2(mypipe[0], 0);
+      close(mypipe[0]);
+      execute_command(c->u.command[1], time_travel);
+    }
+    else {
+      close(mypipe[0]);
+      close(mypipe[1]);
+      return_pid = waitpid(first_pid, &child_status, 0);
+      waitpid(second_pid, &child_status, 0);
+      c->status = WEXITSTATUS(child_status);
+    }
+  }
 }
 
 void
@@ -43,12 +68,14 @@ execute_command (command_t c, int time_travel)
      You can also use external functions defined in the GNU C Library.  */
   switch(c->type) {
   case PIPE_COMMAND:
-    execute_pipe(c);
+    execute_pipe(c, time_travel);
     break;
   case SIMPLE_COMMAND:
     execute(c);
     break;
   case AND_COMMAND:
+    execute_command(c->u.command[0], time_travel);
+    execute_command(c->u.command[1], time_travel);
     break;
   case SEQUENCE_COMMAND:
     break;
