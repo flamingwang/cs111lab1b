@@ -74,13 +74,13 @@ execute_command (command_t c, int time_travel)
     execute(c);
     break;
   case AND_COMMAND:
+  case SEQUENCE_COMMAND:
+  case OR_COMMAND:
     execute_command(c->u.command[0], time_travel);
     execute_command(c->u.command[1], time_travel);
     break;
-  case SEQUENCE_COMMAND:
-    break;
-  case OR_COMMAND:
   case SUBSHELL_COMMAND:
+    execute_command(c->u.subshell_command, time_travel);    
     break;
   }
   //error (1, 0, "command execution not yet implemented");
