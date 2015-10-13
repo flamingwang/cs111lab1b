@@ -75,28 +75,28 @@ typedef struct st_node st_node;
 typedef struct st_node* st_node_t;
 
 typedef struct stack stack;
-typedef struct stack* stack_t;
+typedef struct stack* stack2_t;
 
 // Constructor
-stack_t init_stack();
+stack2_t init_stack();
 
 // Add command onto stack
-void push(command_t to_add, stack_t stack);
+void push(command_t to_add, stack2_t stack);
 
 // Remove and return top command of stack
-command_t pop(stack_t stack);
+command_t pop(stack2_t stack);
 
 // Return top command on stack
-command_t peek(stack_t stack);
+command_t peek(stack2_t stack);
 
 // Check if stack is empty
-bool isEmpty(stack_t stack);
+bool isEmpty(stack2_t stack);
 
 // Free all memory allocated to stack
-void free_stack(stack_t stack);
+void free_stack(stack2_t stack);
 
 // Print out contents of stack
-void print_stack(stack_t stack);
+void print_stack(stack2_t stack);
 
 // Testing Data Structure
 void test_stack();
