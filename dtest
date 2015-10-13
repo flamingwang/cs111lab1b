@@ -1,1 +1,1 @@
-ls && echo "hi" | wc
+(ls && echo hi) | wc
