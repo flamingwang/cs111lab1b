@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+#include <stdio.h>
 #include <error.h>
 
 /* FIXME: You may need to add #include directives, macro definitions,
@@ -22,7 +22,13 @@ void execute (command_t c) {
   int child_status;
   int pid = fork();
   if (pid == 0) {
+    if (c->input != NULL)
+      freopen(c->input, "r", stdin);
+    if (c->output != NULL)
+      freopen(c->output, "w", stdout);
     execvp(c->u.word[0], c->u.word);
+    fclose(stdin);
+    fclose(stdout);
   }
   else {
     int return_pid = waitpid(pid, &child_status, 0);
