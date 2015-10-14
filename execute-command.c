@@ -59,6 +59,11 @@ void execute_pipe (command_t c, int time_travel) {
     else {
       close(mypipe[0]);
       close(mypipe[1]);
+      return_pid = waitpid(-1, &child_status, 0);
+      /*if (return_pid == first_pid)
+	waitpid(second_pid, &child_status, 0);
+      else
+      waitpid(first_pid, &child_status, 0);*/
       return_pid = waitpid(first_pid, &child_status, 0);
       waitpid(second_pid, &child_status, 0);
       c->status = WEXITSTATUS(child_status);
