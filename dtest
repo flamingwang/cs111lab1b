@@ -2,4 +2,7 @@
 
 echo hi | wc > hi2.txt
 
+
+
+
 wc < hi2.txt
