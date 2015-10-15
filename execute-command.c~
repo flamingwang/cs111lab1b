@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <error.h>
 #include <stdlib.h>
-#include <string.h> //for strcmp function
 
 static bool DEBUG = true;
 
@@ -35,10 +34,6 @@ void execute (command_t c) {
     if (c->output != NULL)
       freopen(c->output, "w", stdout);    
     //printf("command: %s %s\n", c->u.word[0], c->u.word[1]);  
-   
-   if(!strcmp(c->u.word[0], "exec"))
-     execvp(c->u.word[1], c->u.word+1);
-   
     execvp(c->u.word[0], c->u.word);
     fclose(stdin);
     fclose(stdout);

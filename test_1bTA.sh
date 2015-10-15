@@ -1,7 +1,5 @@
-#These are test cases for lab1b given by the TAs
 cat < /etc/resolv.conf
 
-#This should error if foo.txt DNE
 (cat) < foo.txt > foo2.txt
 
 ls | (wc)
