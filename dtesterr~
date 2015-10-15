@@ -1,0 +1,3 @@
+(cat) < hi2.txt
+
+echo hi

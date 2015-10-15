@@ -115,6 +115,8 @@ execute_command (command_t c, int time_travel)
      add auxiliary functions and otherwise modify the source code.
      You can also use external functions defined in the GNU C Library.  */
   int pid;
+  int child_status;
+  int return_pid;
   switch(c->type) {
   case PIPE_COMMAND:
     execute_pipe(c, time_travel);
@@ -138,6 +140,8 @@ execute_command (command_t c, int time_travel)
       execute_command_nf(c->u.subshell_command, time_travel);    
 
     }
+    return_pid = waitpid(pid, &child_status, 0);
+
     break;
   }
   //error (1, 0, "command execution not yet implemented");
@@ -150,6 +154,8 @@ execute_command_nf (command_t c, int time_travel)
      add auxiliary functions and otherwise modify the source code.
      You can also use external functions defined in the GNU C Library.  */
   int pid;
+  int child_status;
+  int return_pid;
   switch(c->type) {
   case PIPE_COMMAND:
     execute_pipe(c, time_travel);
@@ -173,6 +179,8 @@ execute_command_nf (command_t c, int time_travel)
       execute_command_nf(c->u.subshell_command, time_travel);    
 
     }
+    return_pid = waitpid(pid, &child_status, 0);
+
     break;
   }
   //error (1, 0, "command execution not yet implemented");
