@@ -7,6 +7,7 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <error.h>
+#include <stdlib.h>
 
 static bool DEBUG = true;
 
@@ -125,10 +126,29 @@ execute_command (command_t c, int time_travel)
     execute(c);
     break;
   case AND_COMMAND:
-  case SEQUENCE_COMMAND:
+    execute_command(c->u.command[0], time_travel);
+    if (c->u.command[0]->status == 0) {
+      execute_command(c->u.command[1], time_travel);
+      c->status = c->u.command[1]->status;
+    }
+    else {
+      c->status = c->u.command[0]->status;
+    }
+    break;
   case OR_COMMAND:
     execute_command(c->u.command[0], time_travel);
+    if (c->u.command[0]->status == 0)
+      c->status = 0;
+    else {
+      execute_command(c->u.command[1], time_travel);
+      c->status = c->u.command[1]->status;
+    }
+      
+    break;
+  case SEQUENCE_COMMAND:
+    execute_command(c->u.command[0], time_travel);
     execute_command(c->u.command[1], time_travel);
+    c->status = 0;
     break;
   case SUBSHELL_COMMAND:
     pid = fork();
@@ -137,11 +157,14 @@ execute_command (command_t c, int time_travel)
 	freopen(c->input, "r", stdin);
       if (c->output != NULL)
 	freopen(c->output, "w", stdout);
-      execute_command_nf(c->u.subshell_command, time_travel);    
-
+      execute_command(c->u.subshell_command, time_travel);    
+      c->status = c->u.subshell_command->status;
+      exit(0);
     }
-    return_pid = waitpid(pid, &child_status, 0);
-
+    else {
+      return_pid = waitpid(pid, &child_status, 0);
+      //exit(0);
+    }
     break;
   }
   //error (1, 0, "command execution not yet implemented");
@@ -164,10 +187,29 @@ execute_command_nf (command_t c, int time_travel)
     execute_nf(c);
     break;
   case AND_COMMAND:
-  case SEQUENCE_COMMAND:
+    execute_command(c->u.command[0], time_travel);
+    if (c->u.command[0]->status == 0) {
+      execute_command(c->u.command[1], time_travel);
+      c->status = c->u.command[1]->status;
+    }
+    else {
+      c->status = c->u.command[0]->status;
+    }
+    break;
   case OR_COMMAND:
-    execute_command_nf(c->u.command[0], time_travel);
-    execute_command_nf(c->u.command[1], time_travel);
+    execute_command(c->u.command[0], time_travel);
+    if (c->u.command[0]->status == 0)
+      c->status = 0;
+    else {
+      execute_command(c->u.command[1], time_travel);
+      c->status = c->u.command[1]->status;
+    }
+      
+    break;
+  case SEQUENCE_COMMAND:
+    execute_command(c->u.command[0], time_travel);
+    execute_command(c->u.command[1], time_travel);
+    c->status = 0;
     break;
   case SUBSHELL_COMMAND:
     pid = fork();
@@ -176,11 +218,15 @@ execute_command_nf (command_t c, int time_travel)
 	freopen(c->input, "r", stdin);
       if (c->output != NULL)
 	freopen(c->output, "w", stdout);
-      execute_command_nf(c->u.subshell_command, time_travel);    
-
+      execute_command(c->u.subshell_command, time_travel);    
+      c->status = c->u.subshell_command->status;
+      exit(0);
     }
-    return_pid = waitpid(pid, &child_status, 0);
-
+    else {
+      return_pid = waitpid(pid, &child_status, 0);
+      //exit(0);
+    }
+    
     break;
   }
   //error (1, 0, "command execution not yet implemented");
