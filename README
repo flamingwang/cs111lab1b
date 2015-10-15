@@ -2,3 +2,6 @@
 
 To do list:
 echo "hi" gives invalid token error because of "
+
+exit status of false should be outputted by lab1a
+false && b
