@@ -1,1 +1,1 @@
-(echo hi) | wc
+(echo hi && echo hello) | wc
