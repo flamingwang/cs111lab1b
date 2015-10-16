@@ -225,7 +225,8 @@ execute_command_nf (command_t c, int time_travel)
 	freopen(c->input, "r", stdin);
       if (c->output != NULL)
 	freopen(c->output, "w", stdout);
-      execute_command_nf(c->u.subshell_command, time_travel);    
+      //TODO: don't know if this should be _nf or not
+      execute_command(c->u.subshell_command, time_travel);    
       c->status = c->u.subshell_command->status;
       exit(c->status);
       //}

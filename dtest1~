@@ -1,0 +1,3 @@
+(false && echo hi) | wc
+
+(false || echo hi) | wc
