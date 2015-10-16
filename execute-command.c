@@ -164,10 +164,12 @@ execute_command (command_t c, int time_travel)
 	freopen(c->output, "w", stdout);
       execute_command(c->u.subshell_command, time_travel);    
       c->status = c->u.subshell_command->status;
-      exit(0);
+      exit(c->status);
     }
     else {
       return_pid = waitpid(pid, &child_status, 0);
+      c->status = WEXITSTATUS(child_status);
+  
       //exit(0);
     }
     break;
@@ -225,7 +227,7 @@ execute_command_nf (command_t c, int time_travel)
 	freopen(c->output, "w", stdout);
       execute_command_nf(c->u.subshell_command, time_travel);    
       c->status = c->u.subshell_command->status;
-      exit(0);
+      exit(c->status);
       //}
       //else {
       //return_pid = waitpid(pid, &child_status, 0);

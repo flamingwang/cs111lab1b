@@ -1,3 +1,5 @@
 (false || true) && echo falseortrue
 
 (true && false) && echo trueandfalse
+
+(true && true) && echo trueandtrue
