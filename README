@@ -1,7 +1,16 @@
-# CS111 Lab 1b
+CS111 Lab 1b README
+===================
 
-To do list:
-echo "hi" gives invalid token error because of "
+- Works for all devised test cases
 
-exit status of false should be outputted by lab1a
-false && b
+- Contains changes to lab1a code for increased robustness
+
+
+
+Limitations
+~~~~~~~~~~~
+- Multiple pipes in a command are not supported. This is alright since
+TAs have stated that it will not tested for.
+
+- Single quotes and double quotes are invalid tokens. See "Shell syntax
+subset" section of the spec.
