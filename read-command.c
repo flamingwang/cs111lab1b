@@ -1073,8 +1073,16 @@ command_stream_t solve_newlines(command_stream_t nlStream) {
       	if(cmd == NULL) {
       	  return cStream;
       	} 
-      	if(cmd->type == NEWLINE_COMMAND) {
-      	  add_command(form_basic_command(NEW_TREE_COMMAND) ,cStream); 
+      	if(cmd->type == NEWLINE_COMMAND) {//two or more newlines form a separate command tree
+	  for(;;){
+	    cmd = traverse(nlStream);
+	    if(cmd == NULL)
+	      return cStream;
+	    if(cmd->type != NEWLINE_COMMAND)
+	      break;
+	  }
+      	  add_command(form_basic_command(NEW_TREE_COMMAND) ,cStream);
+	  continue;
       	}
       	else {
 	  add_command(form_basic_command(SEQUENCE_COMMAND), cStream);
