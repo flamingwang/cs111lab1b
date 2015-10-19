@@ -515,8 +515,10 @@ char* read_file_into_buffer(int (*get_next_byte) (void *), void *get_next_byte_a
     
     // Comment: loop until newline
     if(next_byte == '#') {
-      while ((next_byte = get_next_byte(get_next_byte_argument)) != '\n') 
+      while ((next_byte = get_next_byte(get_next_byte_argument)) != '\n' && next_byte != EOF) 
       {
+	if (next_byte == EOF)
+	  break;
         // test
         // printf("%c", next_byte);
       }
@@ -1266,7 +1268,8 @@ make_command_stream (int (*get_next_byte) (void *),
 
   // Null list checking
   if(token_list == NULL) {
-    fprintf(stderr, "Error: Null Token List After Buffer Passed in");
+    fprintf(stderr, "Error: No commands found in file\n");
+    exit(1);
     return NULL;
   }
   
