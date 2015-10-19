@@ -9,6 +9,9 @@
 #include <ctype.h>    // for isalnum()
 #include <string.h>   // for strcpy()
 
+
+int lin_num = 1;//global for line numbers
+
 // Returns true if character is valid based on the spec
 bool is_valid_char(char character) {
   if(isalnum(character))
@@ -497,10 +500,19 @@ char* read_file_into_buffer(int (*get_next_byte) (void *), void *get_next_byte_a
   size_t iter = 0;
   char* buffer = (char*) checked_malloc(capacity);
   char next_byte;
-
+  
+  
+  
   // loop through entire file
+  bool isFileBeginning = true;
   while ((next_byte = get_next_byte(get_next_byte_argument)) != EOF) {
-
+    
+    //Trim newlines on beginning of file but preseve line number
+    if(next_byte == '\n' && isFileBeginning){
+      lin_num++;
+      continue;
+    }
+    
     // Comment: loop until newline
     if(next_byte == '#') {
       while ((next_byte = get_next_byte(get_next_byte_argument)) != '\n') 
@@ -508,10 +520,13 @@ char* read_file_into_buffer(int (*get_next_byte) (void *), void *get_next_byte_a
         // test
         // printf("%c", next_byte);
       }
-
+      lin_num++;
       // get next byte disregard '\n'
       continue;
     }
+    
+    if(next_byte != '\n' && next_byte != '#')
+      isFileBeginning = false;
   
     // store in buffer
     buffer[iter++] = next_byte;
@@ -540,7 +555,7 @@ token_list_t convert_to_tokens(char* buffer) {
 
   // token info
   token_type type;
-  int lin_num = 1;
+  //int lin_num = 1;//make this a global so it actually gives the correct line number
   
   // iteration variables
   int iter = 0;
