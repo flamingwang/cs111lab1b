@@ -1,5 +1,5 @@
-echo hi | (echo hi && echo hello)
+(echo hi) | wc
 
-echo hi | (echo hi && echo hello)
+ls | (wc)
 
-echo hi | (echo hi && echo hello)
+echo hi| (echo hi && echo hello)
