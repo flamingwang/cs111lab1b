@@ -67,7 +67,7 @@ main (int argc, char **argv)
   clock_t begin, end;
   double time_spent;
   begin = clock();
-  sleep(1);
+  //sleep(1);
   while ((command = read_command_stream (command_stream)))
     {
       if (print_tree)
@@ -77,17 +77,26 @@ main (int argc, char **argv)
 	}
       else
 	{
+	  numProc = 0;
 	  last_command = command;
 	  execute_command (command, time_travel);
+	  //	  if (command->isTime) {
+	  if (true) {
+	    printf("number of subprocesses: %d\n", numProc);
+    	    getrusage(RUSAGE_CHILDREN, &usage);
+	    printf("memory usage: %ld\n", usage.ru_maxrss);
+	    getrusage(RUSAGE_CHILDREN, &usage);
+	    printf("time spent: %ld\n", usage.ru_utime.tv_usec);
+	  }
 	}
     }
   if (!print_tree) {
     end = clock();
-    time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+    /*time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
     printf("number of subprocesses: %d\n", numProc);
     printf("time spent: %f\n", time_spent);
     printf("time beginning: %ld\n", begin);
-    printf("time end: %ld\n", end);
+    printf("time end: %ld\n", end);*/
     
     getrusage(RUSAGE_CHILDREN, &usage);
     
