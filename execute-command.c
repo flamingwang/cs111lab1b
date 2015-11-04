@@ -15,6 +15,8 @@ static bool DEBUG = true;
 /* FIXME: You may need to add #include directives, macro definitions,
    static function definitions, etc.  */
 
+int numProc = 0;
+
 void execute_command_nf (command_t c, int time_travel);
 
 int
@@ -26,6 +28,7 @@ command_status (command_t c)
 //Execute simple command
 void execute (command_t c) {
   int child_status;
+  numProc++;
   int pid = fork();
 
    
@@ -64,6 +67,7 @@ void execute_pipe (command_t c, int time_travel) {
   int first_pid, second_pid, return_pid;
   int mypipe[2];
   pipe(mypipe);
+  numProc++;
   first_pid = fork();
   if (first_pid == 0) {
     close(mypipe[0]);
@@ -72,6 +76,7 @@ void execute_pipe (command_t c, int time_travel) {
     execute_command_nf(c->u.command[0], time_travel);
   }
   else {
+    numProc++;
     second_pid = fork();
     if (second_pid == 0) {
       close(mypipe[1]);
@@ -174,6 +179,8 @@ execute_command (command_t c, int time_travel)
     }
     break;
   }
+  //sleep(1);
+  //printf("Number of processes: %d", numProc);
   //error (1, 0, "command execution not yet implemented");
 }
 

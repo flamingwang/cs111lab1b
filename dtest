@@ -1,5 +1,7 @@
-(ls && echo hi) | wc
+time ls
 
-echo hi | wc > hi2.txt
+time (ls && echo hi) | wc
+
+time echo hi | wc > hi2.txt
 
 wc < hi2.txt

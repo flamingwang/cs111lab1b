@@ -4,11 +4,17 @@
 #include <error.h>
 #include <getopt.h>
 #include <stdio.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "command.h"
 
 static char const *program_name;
 static char const *script_name;
+
+extern int numProc;
 
 static void
 usage (void)
@@ -54,6 +60,14 @@ main (int argc, char **argv)
 
   command_t last_command = NULL;
   command_t command;
+  struct rusage usage;// = malloc(sizeof(struct rusage));
+  //long start, end;
+  //getrusage(RUSAGE_CHILDREN, &usage);
+  //start = usage.ru_utime;
+  clock_t begin, end;
+  double time_spent;
+  begin = clock();
+  sleep(1);
   while ((command = read_command_stream (command_stream)))
     {
       if (print_tree)
@@ -67,6 +81,24 @@ main (int argc, char **argv)
 	  execute_command (command, time_travel);
 	}
     }
+  if (!print_tree) {
+    end = clock();
+    time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+    printf("number of subprocesses: %d\n", numProc);
+    printf("time spent: %f\n", time_spent);
+    printf("time beginning: %ld\n", begin);
+    printf("time end: %ld\n", end);
+    
+    getrusage(RUSAGE_CHILDREN, &usage);
+    
+    //end = usage.ru_utime;
+    //long time = end - start;
+    //printf("CPU time of children: %ld\n", 42); 
+    printf("memory usage: %ld\n", usage.ru_maxrss);
+    getrusage(RUSAGE_CHILDREN, &usage);
+    printf("time spent: %ld\n", usage.ru_utime.tv_usec);
+  }
+
 
   return print_tree || !last_command ? 0 : command_status (last_command);
 }

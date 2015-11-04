@@ -1,0 +1,5 @@
+sort -uc lecture.m4a && echo hi
+
+sleep 2
+
+wc <hi.txt
