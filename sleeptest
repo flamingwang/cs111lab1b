@@ -1,5 +1,3 @@
-time ls
-
 sort -uc lecture.m4a && echo hi
 
 sleep 2

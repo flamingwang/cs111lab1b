@@ -67,6 +67,7 @@ main (int argc, char **argv)
   clock_t begin, end;
   double time_spent;
   begin = clock();
+  struct timeval tv1, tv2;
   //sleep(1);
   while ((command = read_command_stream (command_stream)))
     {
@@ -78,15 +79,21 @@ main (int argc, char **argv)
       else
 	{
 	  numProc = 0;
+	  gettimeofday(&tv1, NULL);
 	  last_command = command;
 	  execute_command (command, time_travel);
 	  //	  if (command->isTime) {
 	  if (true) {
-	    printf("number of subprocesses: %d\n", numProc);
+	    gettimeofday(&tv2, NULL);
+ 	    printf("number of subprocesses: %d\n", numProc);
     	    getrusage(RUSAGE_CHILDREN, &usage);
 	    printf("memory usage: %ld\n", usage.ru_maxrss);
-	    getrusage(RUSAGE_CHILDREN, &usage);
-	    printf("time spent: %ld\n", usage.ru_utime.tv_usec);
+	    //getrusage(RUSAGE_CHILDREN, &usage);
+	    //printf("time spent: %ld\n", usage.ru_utime.tv_usec);
+	    printf ("Total time = %f seconds\n",
+		    (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+		    (double) (tv2.tv_sec - tv1.tv_sec));
+ 
 	  }
 	}
     }
@@ -96,7 +103,7 @@ main (int argc, char **argv)
     printf("number of subprocesses: %d\n", numProc);
     printf("time spent: %f\n", time_spent);
     printf("time beginning: %ld\n", begin);
-    printf("time end: %ld\n", end);*/
+    printf("time end: %ld\n", end);
     
     getrusage(RUSAGE_CHILDREN, &usage);
     
@@ -105,7 +112,7 @@ main (int argc, char **argv)
     //printf("CPU time of children: %ld\n", 42); 
     printf("memory usage: %ld\n", usage.ru_maxrss);
     getrusage(RUSAGE_CHILDREN, &usage);
-    printf("time spent: %ld\n", usage.ru_utime.tv_usec);
+    printf("time spent: %ld\n", usage.ru_utime.tv_usec);*/
   }
 
 
