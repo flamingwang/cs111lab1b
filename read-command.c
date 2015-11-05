@@ -7,7 +7,9 @@
 #include <stdbool.h>  // for bool types
 #include <stdio.h>
 #include <ctype.h>    // for isalnum()
-#include <string.h>   // for strcpy()
+#include <string.h>   // for strcpy(), strcmp()
+
+
 
 
 int lin_num = 1;//global for line numbers
@@ -933,6 +935,14 @@ command_stream_t make_basic_stream(token_list_t tList){
       	for(; ii < num_words; ii++){
       	  cmd->u.word[ii] = checked_malloc(sizeof(char) * (strlen(tList->m_token.words)+1) );
       	  strcpy(cmd->u.word[ii], tList->m_token.words);
+	  
+	  
+	  
+	  if(!strcmp(cmd->u.word[ii], "time"))
+	    fprintf(stderr, "time keyword detected on line number: %d\n", tList->m_token.lin_num);
+	    
+	    
+	    
       	  tList = tList->m_next;
       	 }
       	 cmd->u.word[num_words] = NULL;
