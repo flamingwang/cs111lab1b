@@ -466,12 +466,19 @@ void  print_stream(command_stream_t cStream){
     fprintf(stderr, "Command Stream Empty\n");
   }
   else{
+    fprintf(stderr,"===========\n");
     node_t iter = cStream->m_head;
     while(iter){
       fprintf(stderr,"Type of command is: %d\n",iter->m_dataptr->type);
+      if(iter->m_dataptr->isTime){
+	fprintf(stderr,"You SHOULD time this command\n");
+      }
+      else{
+	fprintf(stderr,"You SHOULDN'T time this command\n");
+      }
       iter = iter->m_next;
     }
-    fprintf(stderr,"SEPARATE\n");
+    fprintf(stderr,"===========\n");
   }
 }
 
@@ -515,19 +522,16 @@ char* read_file_into_buffer(int (*get_next_byte) (void *), void *get_next_byte_a
       continue;
     }
     
-    // Comment: loop until newline
-    if(next_byte == '#') {
-      while ((next_byte = get_next_byte(get_next_byte_argument)) != '\n' && next_byte != EOF) 
-      {
-	if (next_byte == EOF)
-	  break;
-        // test
-        // printf("%c", next_byte);
+    if(next_byte == '#' && isFileBeginning){
+      while( (next_byte = get_next_byte(get_next_byte_argument)) != '\n' && next_byte != EOF){
+	
       }
-      lin_num++;
-      // get next byte disregard '\n'
-      continue;
+      if(next_byte == '\n'){
+	lin_num++;
+	continue;
+      }
     }
+
     
     if(next_byte != '\n' && next_byte != '#')
       isFileBeginning = false;
@@ -577,6 +581,26 @@ token_list_t convert_to_tokens(char* buffer) {
     next = buffer[iter + 1];
 
     switch(current) {
+      
+      // Comment: loop until newline
+      case '#':
+	for(;;){
+	  if(buffer[iter] == '\n' || buffer[iter] == '\0'){
+	    //fprintf(stderr, "Skipped comment\n");
+	    lin_num++;
+	    //fprintf(stderr, "Current Line number is: %d\n", lin_num);
+	    break;
+	  }
+	  else
+	    iter++;
+	}
+	if(buffer[iter] == '\n')
+	  iter++;
+	continue;
+	break;
+      
+          
+
       case '&':
         // correctly have '&&'
         if(current == next) {
@@ -907,7 +931,7 @@ command_stream_t make_basic_stream(token_list_t tList){
   
   // Instantiate stream
   initialize_stream(cStream);
-
+  
   while(tList != NULL){
     switch(tList->m_token.type){
 
@@ -920,29 +944,50 @@ command_stream_t make_basic_stream(token_list_t tList){
       	cmd->input = NULL;
       	cmd->output = NULL;
       	int num_words = 1;
+	int num_times = 0;
+	bool frontTime = false;
       	
       	token_list_t wordPtr = tList;
       	
+	if(!strcmp(wordPtr->m_token.words, "time") && wordPtr->m_next->m_token.type != WORD){
+	    fprintf(stderr, "time keyword before subshell detected on line number: %d\n", wordPtr->m_token.lin_num);
+	    
+	    frontTime = true;
+	    command_t cmd = form_basic_command(66);
+	    add_command(cmd,cStream);
+	  }
+	
       	while(wordPtr->m_next != NULL && wordPtr->m_next->m_token.type == WORD){
-      	  num_words++;
+	  //m_token.words
+	  //fprintf(stderr, "Word detected is %s\n", wordPtr->m_token.words);
+	  if(!strcmp(wordPtr->m_token.words, "time")){
+	    fprintf(stderr, "time keyword detected on line number: %d\n", wordPtr->m_token.lin_num);
+	    if(!frontTime){
+	      command_t cmd = form_basic_command(66);
+	      add_command(cmd,cStream);
+	    }
+	    num_times++;
+	  }
+	  else{
+	    num_words++;
+	  }
       	  wordPtr = wordPtr->m_next;
       	  if(wordPtr->m_next == NULL){break;}
       	}
             
       	cmd->u.word = (char**)checked_malloc((num_words+1));
             
+	int offset = 0;
       	int ii = 0;
-      	for(; ii < num_words; ii++){
-      	  cmd->u.word[ii] = checked_malloc(sizeof(char) * (strlen(tList->m_token.words)+1) );
-      	  strcpy(cmd->u.word[ii], tList->m_token.words);
+      	for(; ii < (num_words+num_times); ii++){
+	  if(!strcmp(tList->m_token.words, "time")){
+	    tList = tList->m_next;
+	    offset++;
+	    continue;
+	  }
+      	  cmd->u.word[ii-offset] = checked_malloc(sizeof(char) * (strlen(tList->m_token.words)+1) );
+      	  strcpy(cmd->u.word[ii-offset], tList->m_token.words);
 	  
-	  
-	  
-	  if(!strcmp(cmd->u.word[ii], "time"))
-	    fprintf(stderr, "time keyword detected on line number: %d\n", tList->m_token.lin_num);
-	    
-	    
-	    
       	  tList = tList->m_next;
       	 }
       	 cmd->u.word[num_words] = NULL;
@@ -1129,6 +1174,7 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
   stack2_t op_stack = init_stack();
   
   bool finish_up = false;
+  bool should_time = false;
   
   reset_traverse(basic_stream);
   cmd = traverse(basic_stream);
@@ -1136,6 +1182,9 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
   while(cmd != NULL){
     if(cmd->type == NEW_TREE_COMMAND)
       finish_up = true;
+    
+    if(cmd->type == 66)
+      should_time = true;
     
     if(cmd->type == SIMPLE_COMMAND)
     {
@@ -1245,7 +1294,13 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
       }
 
       finish_up = false;
-      add_command(pop(com_stack),cStream);
+      
+      
+      command_t time_com = pop(com_stack);
+      time_com->isTime = should_time;
+      add_command(time_com, cStream);
+      should_time = false;
+      
     }
     cmd = traverse(basic_stream);
   }
@@ -1268,9 +1323,16 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
   
   // Reached end of stream
   // Pop the command_t into the command stream
-  add_command(pop(com_stack),cStream);
+  command_t time_com = pop(com_stack);
+  time_com->isTime = should_time;
+  add_command(time_com, cStream);
+
   reset_traverse(cStream);
-  //print_stream(cStream);
+  
+  
+  print_stream(cStream);
+  
+  
   return cStream;
 }
 
