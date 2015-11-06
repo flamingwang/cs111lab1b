@@ -88,18 +88,7 @@ main (int argc, char **argv)
 	    gettimeofday(&tv2, NULL);
  	    printf("number of subprocesses: %d\n", numProc);
     	    getrusage(RUSAGE_CHILDREN, &usage);
-	    printf("memory usage for children: %ld\n", usage.ru_maxrss);
-	    /*printf("integral shared memory usage: %ld\n", usage.ru_ixrss);
-	    printf("data memory usage: %ld\n", usage.ru_idrss);
-	    printf("stack memory usage: %ld\n", usage.ru_isrss);*/
-	    
-    	    getrusage(RUSAGE_SELF, &usage);
-	    printf("memory usage for self: %ld\n", usage.ru_maxrss);
-	    /*printf("maximum resident set size memory usage: %ld\n", usage.ru_maxrss);
-	    printf("integral shared memory usage: %ld\n", usage.ru_ixrss);
-	    printf("data memory usage: %ld\n", usage.ru_idrss);
-	    printf("stack memory usage: %ld\n", usage.ru_isrss);*/
-
+	    printf("memory usage: %ld\n", usage.ru_maxrss);
 	    //getrusage(RUSAGE_CHILDREN, &usage);
 	    //printf("time spent: %ld\n", usage.ru_utime.tv_usec);
 	    printf ("Total time = %f seconds\n\n",
