@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "command.h"
+#include "command-internals.h"
 
 static char const *program_name;
 static char const *script_name;

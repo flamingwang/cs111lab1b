@@ -1336,7 +1336,7 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
   reset_traverse(cStream);
   
   
-  print_stream(cStream);
+  //print_stream(cStream);
   
   
   return cStream;
