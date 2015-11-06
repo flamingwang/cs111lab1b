@@ -161,6 +161,7 @@ execute_command (command_t c, int time_travel)
     c->status = 0;
     break;
   case SUBSHELL_COMMAND:
+    numProc++;
     pid = fork();
     if (pid == 0) {
       if (c->input != NULL)

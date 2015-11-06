@@ -1,0 +1,14 @@
+#Simple Case
+time sleep 0.5
+
+#After a semicolon command
+#echo hi; time ls -l | od -c | sort > /dev/null
+
+#No time test
+echo hello1; echo hello2
+
+#Inside a subshell command
+(time sleep 0.5)
+
+#After && command
+ls -al | od -c | od -c | sort > /dev/null && time sleep 0.5

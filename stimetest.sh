@@ -2,7 +2,7 @@
 time sleep 0.5
 
 #After a semicolon command
-echo hi; time ls -l | od -c | sort > /dev/null
+#echo hi; time ls -l | od -c | sort > /dev/null
 
 #No time test
 echo hello1; echo hello2

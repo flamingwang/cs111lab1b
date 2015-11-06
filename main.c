@@ -91,7 +91,7 @@ main (int argc, char **argv)
 	    printf("memory usage: %ld\n", usage.ru_maxrss);
 	    //getrusage(RUSAGE_CHILDREN, &usage);
 	    //printf("time spent: %ld\n", usage.ru_utime.tv_usec);
-	    printf ("Total time = %f seconds\n",
+	    printf ("Total time = %f seconds\n\n",
 		    (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
 		    (double) (tv2.tv_sec - tv1.tv_sec));
  
