@@ -21,3 +21,9 @@ time (ls -al | od -c | od -c | sort > /dev/null && sleep 0.5)
 
 #Special Case 2
 time (sleep 1)
+
+#Funny Case
+time time time sleep 1
+
+#Funny Case v2
+time ( time ( time ( time ( sleep 1) ) ) )
