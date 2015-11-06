@@ -950,7 +950,7 @@ command_stream_t make_basic_stream(token_list_t tList){
       	token_list_t wordPtr = tList;
       	
 	if(!strcmp(wordPtr->m_token.words, "time") && wordPtr->m_next->m_token.type != WORD){
-	    fprintf(stderr, "time keyword before subshell detected on line number: %d\n", wordPtr->m_token.lin_num);
+	    //fprintf(stderr, "time keyword before subshell detected on line number: %d\n", wordPtr->m_token.lin_num);
 	    
 	    frontTime = true;
 	    command_t cmd = form_basic_command(66);
@@ -961,7 +961,7 @@ command_stream_t make_basic_stream(token_list_t tList){
 	  //m_token.words
 	  //fprintf(stderr, "Word detected is %s\n", wordPtr->m_token.words);
 	  if(!strcmp(wordPtr->m_token.words, "time")){
-	    fprintf(stderr, "time keyword detected on line number: %d\n", wordPtr->m_token.lin_num);
+	    //fprintf(stderr, "time keyword detected on line number: %d\n", wordPtr->m_token.lin_num);
 	    if(!frontTime){
 	      command_t cmd = form_basic_command(66);
 	      add_command(cmd,cStream);
@@ -1330,7 +1330,7 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
   reset_traverse(cStream);
   
   
-  print_stream(cStream);
+  //print_stream(cStream);
   
   
   return cStream;
