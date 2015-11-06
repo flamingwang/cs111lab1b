@@ -443,6 +443,7 @@ command_t traverse(command_stream_t cStream){
   }
   
   // Iterate grab command and iterate m_curr
+  /*
   else{
     command_t cmd = checked_malloc(sizeof(struct command));
     cmd->type = cStream->m_curr->m_dataptr->type;
@@ -455,6 +456,10 @@ command_t traverse(command_stream_t cStream){
     //fprintf(stderr, "Traverse output is: %d\n",cmd->type);
     return cmd;
   }
+  */
+  command_t cmd = cStream->m_curr->m_dataptr;
+  cStream->m_curr = cStream->m_curr->m_next;
+  return cmd;
   
   // This should never execute
   fprintf(stderr, "ERROR in stream traversal\n"); 
