@@ -450,6 +450,7 @@ command_t traverse(command_stream_t cStream){
     cmd->input = cStream->m_curr->m_dataptr->input;
     cmd->output = cStream->m_curr->m_dataptr->output;
     cmd->u = cStream->m_curr->m_dataptr->u;
+    cmd->isTime = cStream->m_curr->m_dataptr->isTime;
     cStream->m_curr = cStream->m_curr->m_next;
     //fprintf(stderr, "Traverse output is: %d\n",cmd->type);
     return cmd;
@@ -1330,7 +1331,7 @@ command_stream_t make_advanced_stream(command_stream_t basic_stream) {
   reset_traverse(cStream);
   
   
-  //print_stream(cStream);
+  print_stream(cStream);
   
   
   return cStream;

@@ -83,7 +83,7 @@ main (int argc, char **argv)
 	  last_command = command;
 	  execute_command (command, time_travel);
 	  //	  if (command->isTime) {
-	  if (command->isTime) {
+	  if (true) {
 	    gettimeofday(&tv2, NULL);
  	    printf("number of subprocesses: %d\n", numProc);
     	    getrusage(RUSAGE_CHILDREN, &usage);
